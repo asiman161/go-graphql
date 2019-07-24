@@ -1,0 +1,47 @@
+scalar Time
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    todos(limit: Int = 25, offset: Int = 0): [Todo!]!
+}
+
+
+type Todo {
+    id: ID!
+    text: String!
+    done: Boolean!
+    user(limit: Int = 25, offset: Int = 0): User!
+    time: Time
+}
+
+type Query {
+    users(limit: Int = 25, offset: Int = 0): [User!]!
+    user(id: ID!): User!
+
+    todos(limit: Int = 25, offset: Int = 0): [Todo!]!
+    todo(id: ID!): Todo!
+}
+
+input NewUser {
+    name: String!
+    email: String!
+}
+
+input NewTodo {
+    text: String!
+    userId: String!
+}
+
+input UpdateTodo {
+    done: Boolean!
+    TodoId: String!
+}
+
+type Mutation {
+    createUser(input: NewUser!): User!
+
+    createTodo(input: NewTodo!): Todo!
+    updateTodo(input: UpdateTodo!): Todo!
+}
