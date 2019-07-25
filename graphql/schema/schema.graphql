@@ -1,5 +1,13 @@
 scalar Time
 
+directive @isAuthenticated on FIELD_DEFINITION
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+    ADMIN
+    USER
+}
+
 type User {
     id: ID!
     name: String!
@@ -17,7 +25,7 @@ type Todo {
 }
 
 type Query {
-    users(limit: Int = 25, offset: Int = 0): [User!]!
+    users(limit: Int = 25, offset: Int = 0): [User!]! @isAuthenticated @hasRole(role: ADMIN)
     user(id: ID!): User!
 
     todos(limit: Int = 25, offset: Int = 0): [Todo!]!
