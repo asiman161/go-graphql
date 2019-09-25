@@ -71,6 +71,11 @@ func (r *Resolver) User() UserResolver {
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input models.NewUser) (*models.User, error) {
+	for i := range r.db.Users {
+		if input.Email == r.db.Users[i].Email {
+			return nil, errors.New("user with provided Email already exists")
+		}
+	}
 	user := &models.User{
 		Name:  input.Name,
 		ID:    fmt.Sprintf("T%d", rand.Intn(1000)),
