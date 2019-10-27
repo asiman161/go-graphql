@@ -89,6 +89,17 @@ func (r *queryResolver) Users(ctx context.Context, limit *int, offset *int) ([]*
 	return r.db.Users, nil
 }
 
+func (r *queryResolver) Everything(ctx context.Context) ([]models.UserTodo, error) {
+	var sl []models.UserTodo
+	for i := range r.db.Users {
+		sl = append(sl, r.db.Users[i])
+	}
+	for i := range r.db.Todos {
+		sl = append(sl, r.db.Todos[i])
+	}
+	return sl, nil
+}
+
 func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
 	for i := range r.db.Users {
 		if r.db.Users[i].ID == id {

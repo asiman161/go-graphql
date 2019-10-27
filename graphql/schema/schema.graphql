@@ -24,12 +24,16 @@ type Todo {
     time: Time
 }
 
+union UserTodo = User | Todo
+
 type Query {
     users(limit: Int = 25, offset: Int = 0): [User!]! @isAuthenticated @hasRole(role: ADMIN)
     user(id: ID!): User!
 
     todos(limit: Int = 25, offset: Int = 0): [Todo!]!
     todo(id: ID!): Todo!
+
+    everything:[UserTodo!]!
 }
 
 input NewUser {

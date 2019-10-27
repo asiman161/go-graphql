@@ -8,6 +8,10 @@ import (
 	"strconv"
 )
 
+type UserTodo interface {
+	IsUserTodo()
+}
+
 type NewTodo struct {
 	Text   string `json:"text"`
 	UserID string `json:"userId"`
@@ -29,6 +33,8 @@ type User struct {
 	Email string  `json:"email"`
 	Todos []*Todo `json:"todos"`
 }
+
+func (User) IsUserTodo() {}
 
 type Role string
 
