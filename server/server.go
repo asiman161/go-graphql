@@ -34,12 +34,21 @@ func main() {
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, "auth", auth)
 			ctx = context.WithValue(ctx, "role", role)
+			names := []string{"John", "Alex"}
+			c1 := &http.Cookie{Name: "c1", Value: "first"}
+			c2 := &http.Cookie{Name: "c2", Value: "second"}
+			r.AddCookie(c1)
+			r.AddCookie(c2)
+			r.Cookies()
+			ctx = context.WithValue(ctx, "names", names)
+			ctx = context.WithValue(ctx, "cookies", r.Cookies())
+			ctx = context.WithValue(ctx, "wr", w)
+			ctx = context.WithValue(ctx, "req", r)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	})
 
 	db := &localdb.LocalDb{}
-
 
 	r.Handle("/", handler.Playground("GraphQL playground", "/query"))
 	config := graphql.NewRootResolvers(db)
@@ -49,6 +58,13 @@ func main() {
 	}
 
 	config.Directives.IsAuthenticated = func(ctx context.Context, obj interface{}, next graphql2.Resolver) (res interface{}, err error) {
+		fmt.Printf("!!!!!: %v :!!!!!\n", ctx.Value("names"))
+		a := ctx.Value("cookies").([]*http.Cookie)
+		r := ctx.Value("req").(*http.Request)
+		w := ctx.Value("wr").(http.ResponseWriter)
+		http.SetCookie(w, &http.Cookie{Name: "random", Value: "some"})
+		fmt.Printf("cookies in request from ctx!!! %+v\n", r.Cookies())
+		fmt.Printf("!!!!!: %+v :!!!!!\n", a)
 		fmt.Printf("DIRECTIVE[auth]: {auth: \"%s\", role: \"%s\"} \n", ctx.Value("auth"), ctx.Value("role"))
 		return next(ctx)
 	}
